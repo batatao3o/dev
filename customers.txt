@@ -1,0 +1,2 @@
+Berat,berat@email.com,150
+Jordan,jordan@email.com,350

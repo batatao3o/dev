@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Berat",
+        "email": "berat@email.com",
+        "balance": 348
+    },
+    {
+        "name": "Jordan",
+        "email": "jordan@email.com",
+        "balance": 450
+    },
+    {
+        "name": "Pasa",
+        "email": "pasa@email.com",
+        "balance": 770.0
+    }
+]
