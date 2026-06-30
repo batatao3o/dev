@@ -1,61 +1,52 @@
-import json
+import sqlite3
 
-class Transaction:
-    def __init__(self, type, amount, description):
-        self.type = type          # 'income' or 'expense'
-        self.amount = amount      # the number eg 500
-        self.description = description  # eg 'freelance job'
-    
-    def to_dict(self):
-        return{
-        'type' : self.type,
-        'amount' : self.amount,
-        'description' : self.description,
-        }
+
 
 class Tracker:
     def __init__(self):
-        self.transactions = []
+        self.conn = sqlite3.connect('finance.db')
+        self.cursor = self.conn.cursor()
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS transactions (
+                id INTEGER PRIMARY KEY,
+                type TEXT,
+                amount REAL,
+                description TEXT
+        )
+        ''')
+        self.conn.commit()
 
     def add_income(self, amount, description):
-        transaction = Transaction('income', amount, description)
-        self.transactions.append(transaction)
+        self.cursor.execute('''
+            INSERT into transactions (type, amount, description)
+            VALUES (?, ?, ?)
+        ''', ('income', amount,description))
+        self.conn.commit()
 
     def add_expense(self, amount, description):
-        transaction = Transaction('expense', amount, description)
-        self.transactions.append(transaction)
+        self.cursor.execute('''
+            INSERT into transactions (type, amount, description)
+            VALUES (?, ?, ?)
+        ''', ('expense', amount, description))
+        self.conn.commit()
     
     def show_summary(self):
+        self.cursor.execute('SELECT * FROM transactions')
+        rows = self.cursor.fetchall()
         balance = 0
-        for transaction in self.transactions:
-            print(f'{transaction.type} {transaction.amount} {transaction.description}')
-            
-        for transaction in self.transactions:
-            if transaction.type == 'income':
-                balance += transaction.amount
+        for row in rows:
+            print(f'{row[1]} {row[2]} {row[3]}')
+            if row[1] == 'income':
+                balance += row[2]
             else:
-                balance -= transaction.amount
+                balance -= row[2]
+
         print(f'total balance: {balance}')
 
-    def save(self):
-        data = []
-        for transaction in self.transactions:
-            data.append(transaction.to_dict())
-        with open('finance.json', 'w') as file:
-            json.dump(data, file, indent=4)
-    def load(self):
-        try:
-            with open('finance.json', 'r') as file:
-                data = json.load(file)
-            for item in data:
-                transaction = Transaction(item['type'], item['amount'], item['description'])
-                self.transactions.append(transaction)
-        except FileNotFoundError:
-            pass
 
 
 tracker = Tracker()
-tracker.load()
+
 
 while True:
     print('what do you want to do?')
@@ -68,19 +59,23 @@ while True:
     if choice == '1':
         amount = input('enter amount:')
         description = input('enter description:')
-        tracker.add_income(int(amount), description)
-        tracker.save()
+        try:
+            tracker.add_income(int(amount), description)
+        except ValueError:
+            print('That is not an amount')
     elif choice == '2':
         amount = input('enter expense:')
         description = input('enter descrioption:')
-        tracker.add_expense(int(amount), description)
-        tracker.save()
+        try:
+            tracker.add_expense(int(amount), description)
+        except ValueError:
+            print('That is not an amount')
     elif choice == '3':
         tracker.show_summary()
     else: 
         print('Goodbye!')
         break
-    
+
 
 
 
