@@ -1,0 +1,22 @@
+[
+    {
+        "type": "income",
+        "amount": 500,
+        "description": "job"
+    },
+    {
+        "type": "expense",
+        "amount": 300,
+        "description": "food"
+    },
+    {
+        "type": "income",
+        "amount": 50000000,
+        "description": "jobba"
+    },
+    {
+        "type": "expense",
+        "amount": 40000001,
+        "description": "house"
+    }
+]
