@@ -1,7 +1,5 @@
 import sqlite3
 
-
-
 class Tracker:
     def __init__(self):
         self.conn = sqlite3.connect('finance.db')
@@ -75,10 +73,3 @@ while True:
     else: 
         print('Goodbye!')
         break
-
-
-
-
-
-
-        
